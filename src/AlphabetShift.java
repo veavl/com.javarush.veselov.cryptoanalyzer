@@ -1,6 +1,6 @@
 public class AlphabetShift {
 
-    private final char[] alphabet;                                                 // Массив Алфавит
+    private final char[] alphabet;
     private int shift;
 
     public AlphabetShift(char[] alphabet, int shift) {
@@ -11,7 +11,8 @@ public class AlphabetShift {
     public char[] getAlphabet() {
         return this.alphabet;
     }
-// Метод преобразует ЗНАЧЕНИЕ КЛЮЧА К ДОПУСТИМОМУ - не больше длины алфавита.
+
+    // Метод преобразует ЗНАЧЕНИЕ КЛЮЧА К ДОПУСТИМОМУ - не больше длины алфавита.
     public int getKey() {
         int lengthAlphabet = alphabet.length;                                       // Длина Алфавита
         if (shift > lengthAlphabet) {                                               // 1. Если shift > длины Алфавита
