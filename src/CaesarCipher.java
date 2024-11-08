@@ -13,14 +13,18 @@ public class CaesarCipher {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите КЛЮЧ ШИФРОВАНИЯ - целое положительное число");
         while (true) {
-            String input = scanner.next();
+            String input = scanner.nextLine();
             try {
+                if (input.isEmpty())
+                    System.out.println("Вы ничего не ввели");
+                else if (Integer.parseInt(input) <= 0) {
+                    System.out.println("Введите целое положительное число");
+                    continue;
+                }
                 key = Integer.parseInt(input);
-//                if (key > ALPHABET.length)                                    // Преобразование КЛЮЧА. Например из №1235 в №31
-//                    key = new AlphabetShift(ALPHABET, key).getKey();
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Не верный формат данных. Введите целое число!");
+                System.out.println("Не верный формат данных. Введите целое положительное число");
             }
         }
         return key;

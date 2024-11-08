@@ -1,12 +1,8 @@
-// Смотрим подробную работу/логику Де/Шифратора (с пояснениями:
-// ZIP/!_Модуль №1 - Итоговый проект/02.11_2 - AfterNoon - Работает шифр и Дешифр в Классах)
-// Этот класс и, если точнее, его метод непосредственно меняет символы строки из одного Алфавита на символы из другого Алфавита
-// И возвращает строку: Зашифрованную или Расшифрованную
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +42,11 @@ public class Cipher {
                             list.add(lineCipher);
                         }
                         Path pathOut = Path.of("src/Files/" + fileTxt);
-                        BufferedWriter writer = Files.newBufferedWriter(pathOut);
-                        for (String str : list) {
-                            writer.write(str + "\n");
-                            writer.flush();
+                        try (BufferedWriter writer = Files.newBufferedWriter(pathOut)) {
+                            for (String str : list) {
+                                writer.write(str + "\n");
+                                writer.flush();
+                            }
                         }
                     }
                     System.out.println("Успешно! Файл доступен: /src/Files/" + fileTxt);

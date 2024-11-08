@@ -14,11 +14,11 @@ public class AlphabetShift {
 
     // Метод преобразует ЗНАЧЕНИЕ КЛЮЧА К ДОПУСТИМОМУ - не больше длины алфавита.
     public int getKey() {
-        int lengthAlphabet = alphabet.length;                                       // Длина Алфавита
-        if (shift > lengthAlphabet) {                                               // 1. Если shift > длины Алфавита
-            shift = shift - lengthAlphabet * (shift / lengthAlphabet);              //    Вычисляем нормальный ключ
-            if (shift % lengthAlphabet == 0)                                        // 2. Если shift > длины Алфавита и при этом кратен длине Алфавита
-                shift = shift - lengthAlphabet * (shift / lengthAlphabet - 1);      //    Немного другая формула!
+        int lengthAlphabet = alphabet.length;
+        if (shift > lengthAlphabet) {
+            shift = shift - lengthAlphabet * (shift / lengthAlphabet);
+            if (shift % lengthAlphabet == 0)                                        // Если shift > длины Алфавита и при этом кратен длине Алфавита
+                shift = shift - lengthAlphabet * (shift / lengthAlphabet - 1);
         }
         return shift;                                                               // Получаем РЕАЛЬНЫЙ ключ
     }
