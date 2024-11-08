@@ -24,7 +24,6 @@ public class CaesarCipher {
         System.out.println("Для выхода введите: 3");
 
         String input;
-        label:
         while (true) {
             input = scanner.nextLine();
             switch (input) {
