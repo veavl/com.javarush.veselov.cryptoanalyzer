@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -7,6 +8,82 @@ public class CaesarCipher {
     private static final char[] ALPHABET = {'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з',
             'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ',
             'ъ', 'ы', 'ь', 'э', 'ю', 'я', '.', ',', '«', '»', '"', '\'', '-', ':', '!', '?', ' '};
+
+    public static void main(String[] args) throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        char[] copyAlphabet = Arrays.copyOf(ALPHABET, ALPHABET.length);
+        char[] alphabetShift;
+        System.out.println("ДЕШИФРАТОР ТЕКТОВЫХ ФАЙЛОВ");
+
+        Cipher cipher = new Cipher();
+        DeCipherBruteForce deCipherBF = new DeCipherBruteForce();
+
+        System.out.println("Шифрование текста введите: 0");
+        System.out.println("Расшифровка с использованием известного ключа: 1");
+        System.out.println("Расшифровка методом brute force введите: 2");
+        System.out.println("Для выхода введите: 3");
+
+        String input;
+        label:
+        while (true) {
+            input = scanner.nextLine();
+            switch (input) {
+
+                case "0": {
+                    int key = valueKey();
+                    AlphabetShift alphaShift = new AlphabetShift(copyAlphabet, key);
+                    alphabetShift = alphaShift.alphabetShift();
+
+                    System.out.println("ШИФРОВКА с КЛЮЧОМ " + key + ". Введите путь к файлу");
+                    String inputFilePath = checkPath();
+
+                    System.out.println("Введите путь к файлу: куда шифровать");
+                    String outputFilePath = scanner.nextLine();
+                    try {
+                        cipher.getChiDeChiString(inputFilePath, outputFilePath, copyAlphabet, alphabetShift);
+                    } catch (IOException | InvalidPathException e) {            // AccessDeniedException, IOException, InvalidPathException -- вводил "K:", "src\Files\" или "ОЩ"
+                        System.out.println("Что-то пошло не так. Возможно вы не корректно ввели путь к файлу");
+                        System.exit(0);
+                    }
+                    break;
+                }
+
+                case "1": {
+                    int key = valueKey();
+                    AlphabetShift alphaShift = new AlphabetShift(copyAlphabet, key);
+                    alphabetShift = alphaShift.alphabetShift();
+
+                    System.out.println("РАСШИФРОВКА. Укажите путь к файлу, ЗАШИФРОВАННОМУ с использованием КЛЮЧА №" + key);
+                    String inputFilePath = checkPath();
+
+                    System.out.println("Введите путь к файлу: куда расшифровывать");
+                    String outputFilePath = scanner.nextLine();
+                    try {
+                        cipher.getChiDeChiString(inputFilePath, outputFilePath, alphabetShift, copyAlphabet);
+                    } catch (IOException | InvalidPathException e) {
+                        System.out.println("Что-то пошло не так. Возможно вы не корректно ввели путь к файлу");
+                    }
+                    break;
+                }
+
+                case "2": {
+                    System.out.println("РАСШИФРОВКА методом brute force. Укажите путь к ЗАШИФРОВАННОМУ файлу");
+                    String inputFilePath = checkPath();
+                    System.out.println("Введите путь к ПАПКЕ: куда расшифровывать");
+                    String outputDir = checkDir();
+                    deCipherBF.deCipher(inputFilePath, outputDir, copyAlphabet);
+                    break;
+                }
+                case "3": {
+                    System.exit(0);
+                }
+                default: {
+                    System.out.println("Не верный формат ввода: введите 0, 1, 2 или 3");
+                    break;
+                }
+            }
+        }
+    }
 
     public static int valueKey() {
         int key;
@@ -30,74 +107,55 @@ public class CaesarCipher {
         return key;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static String checkPath() throws IOException, InvalidPathException {
+        String inputPath;
         Scanner scanner = new Scanner(System.in);
-        char[] copyAlphabet = Arrays.copyOf(ALPHABET, ALPHABET.length);
-        char[] alphabetShift;
-        System.out.println("ДЕШИФРАТОР ТЕКТОВЫХ ФАЙЛОВ");
-
-        Cipher cipher = new Cipher();
-        DeCipherBruteForce deCipherBF = new DeCipherBruteForce();
-
-        System.out.println("Шифрование текста введите: 0");
-        System.out.println("Расшифровка с использованием известного ключа: 1");
-        System.out.println("Расшифровка методом brute force введите: 2");
-        System.out.println("Для выхода введите: 3");
-
-        String input;
-        label:
         while (true) {
-            input = scanner.nextLine();
-            switch (input) {
-                case "0": {
-                    int key = valueKey();
-                    AlphabetShift alphaShift = new AlphabetShift(copyAlphabet, key);
-                    alphabetShift = alphaShift.alphabetShift();                                  // Алфавит Shift - со смещением по КЛЮЧУ
-
-                    System.out.println("ШИФРОВКА с КЛЮЧОМ " + key + ". Укажите путь к файлу");
-                    String fileTxt = "encryptedText_" + "key_№" + key + ".txt";                  // Файл в который будем ШИФРОВАТЬ
-
-                    cipher.getChiDeChiString(fileTxt, copyAlphabet, alphabetShift);
-                    break label;
+            inputPath = scanner.nextLine();
+            try {
+                Path path = Path.of(inputPath.trim());
+                if (!Files.exists(path)) {
+                    System.out.println("Путь к файлу указан не верно, либо файл не существует. Укажите путь к файлу!");
+                    continue;
+                } else if (Files.readString(path).isEmpty()) {
+                    System.out.println("Файл пустой. Укажите путь к файл с текстом");
+                    continue;
                 }
-                case "1": {
-                    int key = valueKey();
-                    AlphabetShift alphaShift = new AlphabetShift(copyAlphabet, key);
-                    alphabetShift = alphaShift.alphabetShift();
-
-                    System.out.println("РАСШИФРОВКА. Укажите путь к файлу, ЗАШИФРОВАННОМУ с использованием КЛЮЧА №" + key);
-                    String fileTxt = "decryptedText.txt";                                         // Файл в который будем ДЕШИФРОВАТЬ
-
-                    cipher.getChiDeChiString(fileTxt, alphabetShift, copyAlphabet);
-                    break label;
-                }
-                case "2":
-                    System.out.println("РАСШИФРОВКА методом brute force. Укажите путь к ЗАШИФРОВАННОМУ файлу");
-                    deCipherBF.deCipher(copyAlphabet);
-                    break label;
-                case "3":
-                    System.exit(0);
-                default:
-                    System.out.println("Не верный формат ввода: введите 0, 1, 2 или 3");
-                    break;
+                inputPath = path.toString();
+                break;
+            } catch (AccessDeniedException | InvalidPathException e) {
+                System.out.println("Что-то пошло не так. Укажите путь к файлу!");
             }
         }
+        return inputPath;
+    }
+
+    public static String checkDir() throws InvalidPathException {
+        String outputDir;
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            outputDir = scanner.nextLine();
+            try {
+                if (outputDir.isEmpty()) {
+                    System.out.println("Вы ничего не ввели. Укажите путь");
+                    continue;
+                }
+                Path path = Path.of(outputDir.trim());
+                if (!Files.isDirectory(path)) {
+                    System.out.println("Укажите существующий путь");
+                    continue;
+                }
+                outputDir = path.toString();
+                break;
+            } catch (InvalidPathException e) {
+                System.out.println("Что-то пошло не так. Укажите путь!");
+            }
+        }
+        return outputDir;
     }
 }
 
-// Для шифрования:
-// C:\Users\veavl\IdeaProjects\com.javarush.veselov.cryptoanalyzer\
-// src\Files\originalText.txt
 
-// Для дешифрования:
-// src\Files\encryptedText_key_№21.txt
-
-// bruteForce
-// src\Files\encryptedText_key_№21.txt
-// C:\Users\veavl\IdeaProjects\com.javarush.veselov.cryptoanalyzer\src\Files\encryptedText_key_№5.txt
-
-
-// C:\Users\veavl\IdeaProjects\com.javarush.veselov.cryptoanalyzer\src\Temp\Files_2\Maharadzh-Nisargadatta.txt
 
 
 
