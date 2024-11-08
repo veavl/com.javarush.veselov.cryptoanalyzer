@@ -12,7 +12,7 @@ public class AlphabetShift {
         return this.alphabet;
     }
 
-    // Метод преобразует ЗНАЧЕНИЕ КЛЮЧА К ДОПУСТИМОМУ - не больше длины алфавита.
+    // Метод преобразует ЗНАЧЕНИЕ КЛЮЧА К ДОПУСТИМОМУ - не больше длины алфавита. Таким образом, ключ можно ввести любой
     public int getKey() {
         int lengthAlphabet = alphabet.length;
         if (shift > lengthAlphabet) {

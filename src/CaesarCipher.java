@@ -111,6 +111,10 @@ public class CaesarCipher {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             inputPath = scanner.nextLine();
+            if (inputPath.isEmpty()) {
+                System.out.println("Вы ничего не ввели. Укажите путь");
+                continue;
+            }
             try {
                 Path path = Path.of(inputPath.trim());
                 if (!Files.exists(path)) {
