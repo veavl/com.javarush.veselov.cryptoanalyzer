@@ -93,6 +93,7 @@ public class CaesarCipher {
 // C:\Users\veavl\IdeaProjects\com.javarush.veselov.cryptoanalyzer\src\Files\encryptedText_key_№5.txt
 
 
+// C:\Users\veavl\IdeaProjects\com.javarush.veselov.cryptoanalyzer\src\Temp\Files_2\Maharadzh-Nisargadatta.txt
 
 
 

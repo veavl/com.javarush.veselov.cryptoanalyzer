@@ -3,11 +3,13 @@
 // Этот класс и, если точнее, его метод непосредственно меняет символы строки из одного Алфавита на символы из другого Алфавита
 // И возвращает строку: Зашифрованную или Расшифрованную
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Cipher {
@@ -15,6 +17,7 @@ public class Cipher {
     public void getChiDeChiString(String fileTxt, char[] alfa1, char[] alfa2) throws IOException, InvalidPathException {      // Если на первом месте alphabet -- Шифровка, если alphabetShift - ДеШифровка
         Scanner scanner = new Scanner(System.in);
         String stringPath;
+        List<String> list = new ArrayList<>();
         while (true) {
             stringPath = scanner.nextLine();                                                                                  // Путь к ФАЙЛУ для рас/шифровки
             try {
@@ -24,21 +27,31 @@ public class Cipher {
                 } else if (Files.readString(path).isEmpty()) {
                     System.out.println("Файл пустой. Укажите путь к файл с текстом");
                 } else {
-                    StringBuilder strBuilder = new StringBuilder();
-                    strBuilder.setLength(0);                                           // Обнуляем StringBuilder
-                    String readString = Files.readString(path);                        // Читаем содержимое файла
-                    char[] arrayText = readString.toCharArray();                       // readString -- в массив char[] и шифруем/дешифруем ее -- смотря что нужно!
-                    for (int i = 0; i < arrayText.length; i++) {
-                        for (int j = 0; j < alfa1.length; j++) {
-                            if (Character.toString(arrayText[i]).equalsIgnoreCase(Character.toString(alfa1[j]))) {
-                                strBuilder.append(alfa2[j]);
+
+                    try (BufferedReader reader = Files.newBufferedReader(path)) {
+                        String line;
+                        char[] arrayCipher;
+                        while (reader.ready()) {
+                            line = reader.readLine();
+                            arrayCipher = new char[line.length()];
+                            char[] arrayLine = line.toCharArray();
+                            for (int i = 0; i < arrayLine.length; i++) {
+                                for (int j = 0; j < alfa1.length; j++) {
+                                    if (Character.toString(arrayLine[i]).equalsIgnoreCase(Character.toString(alfa1[j]))) {
+                                        arrayCipher[i] = alfa2[j];
+                                    }
+                                }
                             }
+                            String lineCipher = new String(arrayCipher);
+                            list.add(lineCipher);
+                        }
+                        Path pathOut = Path.of("src/Files/" + fileTxt);
+                        BufferedWriter writer = Files.newBufferedWriter(pathOut);
+                        for (String str : list) {
+                            writer.write(str + "\n");
+                            writer.flush();
                         }
                     }
-
-                    String resultString = strBuilder.toString();                                             // resultString -- нужно записать в ФАЙЛ
-                    Path pathEnDecryptedFile = Path.of("src/Files/" + fileTxt);                              // Куда будем писать файл
-                    Files.writeString(pathEnDecryptedFile, resultString);                                    // Записываем в ФАЙЛ рас/зашифрованную строку
                     System.out.println("Успешно! Файл доступен: /src/Files/" + fileTxt);
                     break;
                 }

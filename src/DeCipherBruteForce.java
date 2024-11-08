@@ -22,10 +22,11 @@ public class DeCipherBruteForce {
                     System.out.println("Путь к файлу указан не верно, либо файл не существует. Укажите путь к файлу!");
                 } else if (Files.readString(path).isEmpty()) {
                     System.out.println("Файл пустой. Укажите путь к файл с текстом");
-                } else {
-                    for (int key = 0; key < alfa.length; key++) {                       // Ниже код -- аналог Cipher.java. Только выполняется для ВСЕХ возможных ключей
+                }
+                else {
+                    for (int key = 0; key < alfa.length ; key++) {                       // Ниже код -- аналог Cipher.java. Только выполняется для ВСЕХ возможных ключей
                         AlphabetShift alphaShift = new AlphabetShift(alfa, key);
-                        alphabetShift = alphaShift.alphabetShift();
+                        alphabetShift  = alphaShift.alphabetShift();
 
                         StringBuilder strBuilder = new StringBuilder();
                         strBuilder.setLength(0);
@@ -39,7 +40,7 @@ public class DeCipherBruteForce {
                             }
                         }
                         String resultString = strBuilder.toString();
-                        Path pathEnDecryptedFile = Path.of("src/Files/bruteForce/decrypted_KEY №" + key + ".txt");
+                        Path pathEnDecryptedFile = Path.of("src/Files/bruteForce/decrypted_KEY №"+ key +".txt");
                         Files.writeString(pathEnDecryptedFile, resultString);
                     }
                     System.out.println("Успешно! Файлы доступны: src/Files/bruteForce/");
